@@ -45,4 +45,4 @@
       
       
     - debug:
-        var: subscription.result
+        var: subscription.result.status
