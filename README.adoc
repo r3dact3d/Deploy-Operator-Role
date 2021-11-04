@@ -4,6 +4,10 @@ To provide reusable automation to run ansible plays and roles against OpenShift 
 
 NOTE: This will always pull the latest *stable* OpenShift 4 CLI tools
 
+== Requirements
+
+You will need an OpenShift 4 cluster deployed with access to the kubeconfig
+
 == Roles
 
 * Add any addition modules to requirements.txt with `openshift` listed
