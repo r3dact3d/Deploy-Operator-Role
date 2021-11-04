@@ -16,6 +16,8 @@ NOTE: This will always pull the latest *stable* OpenShift 4 CLI tools
 .. `OPERATOR-NAME: web-terminal`  [red yellow-background]#put operator to install here#
 .. `NAMESPACE: openshift-operators`  [red yellow-background]#put namespace to install operator at here#
 
+== Workflow
+
 Once the main branch is pushed with updates to main.yaml the workflow will trigger the actions that will run *ansible-playbook*.
 
 This is intended to simulate running Ansible playbooks to engineer, operate, or manage OpenShift 4 clusters on a bastion host.  The playbook is intended to run locally on runner and use  either `oc`, `kubectl`, or other modules that interact with OpenShift APIs or any APIs.
