@@ -1,0 +1,32 @@
+name: Run ansible code 
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'a.yaml'
+jobs:
+  Setup:
+    name: Setup Ansible Runner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the goodies
+        uses: actions/checkout@main
+      - name: Install OpenShift CLI tools
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          openshift-install: "4"
+          oc: "4"
+          
+      - name: Setup
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" >> $GITHUB_WORKSPACE/kubeconfig
+          cat $GITHUB_WORKSPACE/kubeconfig
+          
+      - name: Run Ansible playbook
+        uses: dawidd6/action-ansible-playbook@v2.5.0
+        with:
+          playbook: a.yaml
+          options: |
+            --extra-vars KUBECONFIG="$GITHUB_WORKSPACE/kubeconfig
+            --verbose
