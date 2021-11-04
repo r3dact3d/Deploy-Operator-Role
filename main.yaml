@@ -23,7 +23,7 @@
         api_version: v1
         kind: Namespace
         state: present
-      when: "'false' not in INSTALL_MODE.stdout"
+      when: "'true' not in INSTALL_MODE.stdout"
       
     - name: Use Jinja2 template to configure subscription
       template:
