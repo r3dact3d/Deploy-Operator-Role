@@ -37,8 +37,5 @@
         kubeconfig: "{{ KUBECONFIG }}"
       register: subscription
       
-      
-      
-      
     - debug:
         var: subscription.result
