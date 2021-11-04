@@ -9,6 +9,9 @@ jobs:
   Setup:
     name: Setup Ansible Runner
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.6", "3.7", "3.8", "3.9"]
     steps:
       - name: Get the goodies
         uses: actions/checkout@main
@@ -22,6 +25,17 @@ jobs:
         run: |
           echo "${{ secrets.KUBECONFIG }}" >> $GITHUB_WORKSPACE/kubeconfig
           cat $GITHUB_WORKSPACE/kubeconfig
+          
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: ${{ matrix.python-version }}
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openshift
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           
       - name: Run Ansible playbook
         uses: dawidd6/action-ansible-playbook@v2.5.0
