@@ -4,7 +4,7 @@ on:
     branches:
       - 'main'
     paths:
-      - 'a.yaml'
+      - 'main.yaml'
 jobs:
   Setup:
     name: Setup Ansible Runner
