@@ -1,12 +1,17 @@
-= Deploy Operator role
-
 == Purpose
 
-To provide reusable automation to run ansible plays against OpenShift 4 clusters
+To provide reusable automation to run ansible plays and roles against OpenShift 4 clusters
+
+NOTE: This will always pull the latest *stable* OpenShift 4 CLI tools
+
+== Roles
+
+* Add any addition modules to requirements.txt with `openshift` listed
+
+=== Deploy-Operator
 
 . Create repository secret in GitHub Settings > Secrets called KUBECONFIG that contains kubeconfig details
-. Add any addition modules to requirements.txt with `openshift` listed
-. Add ansible playbook called main.yaml
+. Update ansible playbook called main.yaml
 .. Ensure playbook has *vars* for `ansible_python_interpreter: /usr/bin/python3`
 
 Once the main branch is pushed with updates to main.yaml the workflow will trigger the actions that will run *ansible-playbook*.
