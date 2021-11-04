@@ -13,8 +13,8 @@ NOTE: This will always pull the latest *stable* OpenShift 4 CLI tools
 . Create repository secret in GitHub Settings > Secrets called KUBECONFIG that contains kubeconfig details
 . Update ansible playbook called main.yaml to ensure *vars* are set
 .. `ansible_python_interpreter: /usr/bin/python3`
-.. `OPERATOR-NAME: web-terminal`
-.. `NAMESPACE: openshift-operators`
+.. `OPERATOR-NAME: web-terminal`  [red]#put operator to install here#
+.. `NAMESPACE: openshift-operators`  [red]#put namespace to install operator at here#
 
 Once the main branch is pushed with updates to main.yaml the workflow will trigger the actions that will run *ansible-playbook*.
 
