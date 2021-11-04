@@ -39,8 +39,7 @@
         kubeconfig: "{{ KUBECONFIG }}"
       register: subscription
       
-      
-      
+     
       
       
       
