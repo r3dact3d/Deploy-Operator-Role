@@ -23,19 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           
-      - name: Setup kubeconfig
+      - name: Deploy operator
         run: |
           echo "${{ secrets.KUBECONFIG }}" >> $GITHUB_WORKSPACE/kubeconfig
           ansible-playbook main.yaml --extra-vars KUBECONFIG=$GITHUB_WORKSPACE/kubeconfig
-          
-          
-#      - name: Setup Python
-#        uses: actions/setup-python@v2.2.2
-        
-#      - name: Run Ansible playbook
-#        uses: dawidd6/action-ansible-playbook@v2.5.0
-#        with:
-#          playbook: main.yaml
-#          options: |
-#            --extra-vars KUBECONFIG="$GITHUB_WORKSPACE/kubeconfig
-#            --verbose
