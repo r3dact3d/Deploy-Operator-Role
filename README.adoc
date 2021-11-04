@@ -1,1 +1,14 @@
 = Deploy Operator role
+
+== Purpose
+
+To provide reusable automation to run ansible plays against OpenShift 4 clusters
+
+. Create repository secret in GitHub Settings > Secrets called KUBECONFIG that contains kubeconfig details
+. Add any addition modules to requirements.txt with `openshift` listed
+. Add ansible playbook called main.yaml
+.. Ensure playbook has *vars* for `ansible_python_interpreter: /usr/bin/python3`
+
+Once the main branch is pushed with updates to main.yaml the workflow will trigger the actions that will run *ansible-playbook*.
+
+This is intended to simulate running Ansible playbooks to engineer, operate, or manage OpenShift 4 clusters on a bastion host.  The playbook is intended to run locally on runner and use  either `oc`, `kubectl`, or other modules that interact with OpenShift APIs or any APIs.
