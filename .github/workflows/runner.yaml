@@ -22,19 +22,23 @@ jobs:
         run: |
           echo "${{ secrets.KUBECONFIG }}" >> $GITHUB_WORKSPACE/kubeconfig
           cat $GITHUB_WORKSPACE/kubeconfig
+          ansible --version
           
-      - name: Setup Python
-        uses: actions/setup-python@v2.2.2
+
           
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           
-      - name: Run Ansible playbook
-        uses: dawidd6/action-ansible-playbook@v2.5.0
-        with:
-          playbook: main.yaml
-          options: |
-            --extra-vars KUBECONFIG="$GITHUB_WORKSPACE/kubeconfig
-            --verbose
+
+#      - name: Setup Python
+#        uses: actions/setup-python@v2.2.2
+        
+#      - name: Run Ansible playbook
+#        uses: dawidd6/action-ansible-playbook@v2.5.0
+#        with:
+#          playbook: main.yaml
+#          options: |
+#            --extra-vars KUBECONFIG="$GITHUB_WORKSPACE/kubeconfig
+#            --verbose
