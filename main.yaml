@@ -9,6 +9,8 @@
       command: oc get packagemanifest "{{ OPERATOR_NAME }}" -n openshift-marketplace -o jsonpath='{.status.defaultChannel}' --kubeconfig "{{ KUBECONFIG }}"
       register: CHANNEL
       
+      
+      
     - name: Get catalog source for operator from packagemanifest
       command: oc get packagemanifest "{{ OPERATOR_NAME }}" -n openshift-marketplace -o jsonpath='{.status.catalogSource}' --kubeconfig "{{ KUBECONFIG }}"
       register: CATALOG_SOURCE
