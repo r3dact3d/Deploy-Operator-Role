@@ -27,5 +27,7 @@
       command: oc apply -f subscription.yaml --kubeconfig "{{ KUBECONFIG }}"
       register: subscription
       
+      
+      
     - debug:
         var: subscription.stdout
