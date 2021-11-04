@@ -7,4 +7,3 @@
         OPERATOR_NAME: nginx-ingress-operator
         NAMESPACE: openshift-operators
         ansible_python_interpreter: /usr/bin/python3
-
