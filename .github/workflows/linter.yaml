@@ -1,0 +1,21 @@
+name: Ansible Linter 
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  Lint:
+    name: Setup Ansible Runner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the goodies
+        uses: actions/checkout@main
+        
+      - name: Lint Ansible Playbook
+        uses: ansible/ansible-lint-action@v4.1.0.post0
+        with:
+          targets: |
+            main.yaml
+            roles/*/*/*.yaml
+            *.yaml
