@@ -1,6 +1,6 @@
 == Status
 
-https://github.com/r3dact3d/OpenShift4-Ansible-Roles/actions/workflows/linter.yaml/badge.svg[]
+image::https://github.com/r3dact3d/OpenShift4-Ansible-Roles/actions/workflows/linter.yaml/badge.svg[]
 
 
 ![Ansible Linter]
