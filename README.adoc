@@ -1,5 +1,5 @@
 == Status
-[(https://github.com/r3dact3d/OpenShift4-Ansible-Roles/actions/workflows/linter.yaml/badge.svg)![Ansible Linter]](https://github.com/r3dact3d/OpenShift4-Ansible-Roles/actions/workflows/linter.yaml)
+[!(https://github.com/r3dact3d/OpenShift4-Ansible-Roles/actions/workflows/linter.yaml/badge.svg)[Ansible Linter]](https://github.com/r3dact3d/OpenShift4-Ansible-Roles/actions/workflows/linter.yaml)
 
 
 
