@@ -1,3 +1,6 @@
+== Status
+[![Ansible Linter](https://github.com/r3dact3d/OpenShift4-Ansible-Roles/actions/workflows/linter.yaml/badge.svg)](https://github.com/r3dact3d/OpenShift4-Ansible-Roles/actions/workflows/linter.yaml)
+
 == Purpose
 
 To provide reusable automation to run ansible plays and roles against OpenShift 4 clusters
