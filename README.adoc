@@ -1,5 +1,3 @@
-== Status
-
 image::https://github.com/r3dact3d/OpenShift4-Ansible-Roles/actions/workflows/linter.yaml/badge.svg[https://github.com/r3dact3d/OpenShift4-Ansible-Roles/actions/workflows/linter.yaml]
 
 == Purpose
