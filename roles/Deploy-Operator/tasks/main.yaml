@@ -20,15 +20,23 @@
     state: present
   when: "'true' not in INSTALL_MODE.stdout"
       
-- name: Use Jinja2 template to configure subscription
-  template:
-    src: files/subscription.j2
-    dest: subscription.yaml
-         
-- name: Deploy operator
+- name: Create operator subscription
   k8s:
     state: present
-    src: subscription.yaml
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        labels:
+          operators.coreos.com/{{ OPERATOR_NAME }}.{{ NAMESPACE }}: ''
+        name: "{{ OPERATOR_NAME }}"
+        namespace: "{{ NAMESPACE }}"
+      spec:
+        channel: "{{ CHANNEL.stdout }}"
+        installPlanApproval: Automatic
+        name: "{{ OPERATOR_NAME }}"
+        source: "{{ CATALOG_SOURCE.stdout }}"
+        sourceNamespace: openshift-marketplace
     kubeconfig: "{{ KUBECONFIG }}"
   register: subscription
 
