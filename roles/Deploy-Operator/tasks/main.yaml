@@ -2,14 +2,17 @@
 
 - name: Get channel for operator from packagemanifest
   command: oc get packagemanifest "{{ OPERATOR_NAME }}" -n openshift-marketplace -o jsonpath='{.status.defaultChannel}' --kubeconfig "{{ KUBECONFIG }}"
+  when: "CHANNEL.stdout == ''"
   register: CHANNEL
 
 - name: Get catalog source for operator from packagemanifest
   command: oc get packagemanifest "{{ OPERATOR_NAME }}" -n openshift-marketplace -o jsonpath='{.status.catalogSource}' --kubeconfig "{{ KUBECONFIG }}"
+  when: "CATALOG_SOURCE.stdout == ''"
   register: CATALOG_SOURCE
 
 - name: Check if Operator Group is needed
   command: oc get packagemanifest "{{ OPERATOR_NAME }}" -n openshift-marketplace  -o jsonpath='{.status.channels[].currentCSVDesc.installModes[3]}' --kubeconfig "{{ KUBECONFIG }}"
+  when: "INSTALL_MODE.stdout == ''"
   register: INSTALL_MODE
 
 - name: Create a k8s namespace
