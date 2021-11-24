@@ -1,0 +1,17 @@
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  {% if operator_name == 'openshift-gitops-operator' -%}
+  name: global-operators
+  {% else -%}
+  name: {{ operator_namespace }}
+  {% endif -%}
+  namespace: {{ operator_namespace }}
+{% if operator_name == 'serverless-operator' or operator_name == 'openshift-gitops-operator' -%}
+spec: {}
+{% else -%}
+spec:
+  targetNamespaces:
+  - {{ operator_namespace }}
+{% endif -%}

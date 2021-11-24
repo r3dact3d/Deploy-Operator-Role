@@ -1,5 +1,5 @@
 ---
-- name: Run ansible playbook
+- name: install operators
   hosts: localhost
   vars:
     manifests_dir: "./output/manifests"

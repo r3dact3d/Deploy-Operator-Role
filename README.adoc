@@ -24,6 +24,14 @@ You will need an OpenShift 4 cluster deployed with access to the kubeconfig
 .. `OPERATOR-NAME: web-terminal`  [red yellow-background]#put operator to install here#
 .. `NAMESPACE: openshift-operators`  [red yellow-background]#put namespace to install operator at here#
 
+=== install_operator
+. Create repository secret in `GitHub Settings > Secrets` called `KUBECONFIG` that contains kubeconfig details for the OCP4 cluster.
+. Update ansible playbook called `main.yaml`` to ensure the operators that you wanted installed are in the `role`, formated as:
+  ```
+    - {name: OPERATOR_NAME, namespace: OPERATOR_NAMESPACE}
+    - {name: openshift-gitops-operator, namespace: openshift-operators}
+  ```
+
 == Workflow
 
 Once the main branch is pushed with updates to main.yaml the workflow will trigger the actions that will run *ansible-playbook*.

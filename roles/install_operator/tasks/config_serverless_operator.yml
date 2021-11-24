@@ -1,0 +1,4 @@
+---
+- name: serverles-operator
+  debug:
+    var: operator_name
