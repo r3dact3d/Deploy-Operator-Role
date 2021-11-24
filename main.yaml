@@ -2,7 +2,7 @@
 - name: Run ansible playbook
   hosts: localhost
   vars:
-    manifests_dir: "./output/manifests"
+    manifests_dir: "/tmp/manifests"
   pre_tasks:
     - name: Create directory for all manifests
       file:
