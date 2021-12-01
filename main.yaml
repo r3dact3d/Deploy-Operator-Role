@@ -2,7 +2,10 @@
 - name: Run ansible playbook
   hosts: localhost
   vars:
-    manifests_dir: "/tmp/manifests"
+    manifests_dir: "$GITHUB_WORKSPACE/manifests"
+    kubeconfig_path: "{{ lookup('env','KUBECONFIG') }}"
+  environment:
+    KUBECONFIG: "{{ kubeconfig_path }}"
   pre_tasks:
     - name: Create directory for all manifests
       file:
@@ -24,3 +27,4 @@
         - {name: serverless-operator, namespace: openshift-serverless}
       loop_control:
         loop_var: operators_var
+
