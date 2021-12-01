@@ -1,12 +1,5 @@
 ---
 
-- name: debug
-  debug:
-    msg: "kubeconfig_path: {{ kubeconfig_path  }}"
-
-- name: debug 2
-  shell: "oc get pods -A --kubeconfig $KUBECONFIG"
-
 - name: include set_facts tasks
   import_tasks: set_facts.yml
 
