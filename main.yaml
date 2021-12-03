@@ -26,6 +26,6 @@
         - {name: dynatrace-operator, namespace: dynatrace}
         - {name: compliance-operator, namespace: openshift-compliance}
         - {name: serverless-operator, namespace: openshift-serverless}
+        - {name: mtc-operator, namespace: openshift-migration}
       loop_control:
         loop_var: operators_var
-
