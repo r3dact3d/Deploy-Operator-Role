@@ -1,0 +1,46 @@
+---
+- name: Get Operator Channel - {{ operator_name }}
+  command: oc get packagemanifest {{ operator_name }} -n openshift-marketplace -o jsonpath='{.status.defaultChannel}'
+  changed_when: false
+  register: reg_operator_channel
+
+- name: Set fact for Operator Channel - {{ operator_name }}
+  set_fact:
+    operator_channel: "{{ reg_operator_channel.stdout }}"
+
+- name: Get Operator CatalogSource - {{ operator_name }}
+  command: oc get packagemanifest {{ operator_name }} -n openshift-marketplace -o jsonpath='{.status.catalogSource}'
+  changed_when: false
+  register: reg_operator_catalogsource
+
+- name: Set fact for Operator CatalogSource - {{ operator_name }}
+  set_fact:
+    operator_catalogsource: "{{ reg_operator_catalogsource.stdout }}"
+
+- name: Get Operator StartingCSV - {{ operator_name }}
+  command: oc get packagemanifest {{ operator_name }} -n openshift-marketplace -o jsonpath='{.status.channels[-1:].currentCSV}'
+  changed_when: false
+  register: reg_operator_csv
+
+- name: Set fact for Operator StartingCSV - {{ operator_name }}
+  set_fact:
+    operator_csv: "{{ reg_operator_csv.stdout }}"
+
+- name: Get Operator version - {{ operator_name }}
+  command: oc get packagemanifest {{ operator_name }} -n openshift-marketplace -o jsonpath='{.status.channels[].currentCSVDesc.version}'
+  changed_when: false
+  register: reg_operator_version
+
+- name: Set fact for Operator version - {{ operator_name }}
+  set_fact:
+    operator_version: "{{ reg_operator_version.stdout }}"
+
+- name: Get output from pip show openshift command
+  command: pip show openshift
+  ignore_errors: true
+  changed_when: false
+  register: reg_pip_module_openshift_installed
+
+- name: Set fact for openshift module
+  set_fact:
+    pip_module_openshift_installed: "{{ reg_pip_module_openshift_installed.rc }}"

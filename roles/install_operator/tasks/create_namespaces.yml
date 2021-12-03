@@ -1,0 +1,62 @@
+---
+
+- name: create manifest template for {{ operator_namespace }} namespace
+  template:
+    src: namespace.yml.j2
+    dest: "{{ manifests_dir }}/{{ operator_name }}-namespace.yml"
+    mode: 0644
+    lstrip_blocks: true
+
+- name: create namespaces with k8s module
+  block:
+    - name: create {{ operator_namespace }} namespace with k8s module
+      k8s:
+        state: present
+        wait: true
+        definition: "{{ lookup('file', '{{ manifests_dir }}/{{ operator_name }}-namespace.yml') | from_yaml }}"
+
+    - name: create knative-serving and knative-eventing namespace
+      k8s:
+        state: present
+        wait: true
+        definition: "{{ lookup('file', '{{ manifests_dir }}/{{ operator_name }}-namespace.yml') | from_yaml }}"
+      loop:
+        - knative-eventing
+        - knative-serving
+      when: operator_name == "serverless-operator"
+
+  when:
+    - pip_module_openshift_installed  == "0"
+
+- name: create namespaces with raw commands
+  block:
+    - name: create {{ operator_namespace }} namespace with raw commands
+      command: "oc apply -f {{ manifests_dir }}/{{ operator_name }}-namespace.yml"
+
+    - name: Wait until {{ operator_namespace }} namespace is created
+      command: "oc get namespace {{ operator_namespace }} -o jsonpath='{.status.phase}' "
+      register: namespaces_created
+      until: "'Active' in namespaces_created.stdout"
+      retries: 60
+      delay: 2
+
+    - name: create manifest template for knative-eventing and knative-serving namespaces
+      template:
+        src: namespace.yml.j2
+        dest: "{{ manifests_dir }}/{{ item }}-namespace.yml"
+        mode: 0644
+        lstrip_blocks: true
+      loop:
+        - knative-eventing
+        - knative-serving
+      when: operator_name == "serverless-operator"
+
+    - name: Apply knative-eventing and knative-serving manifests files
+      command: "oc apply -f {{ manifests_dir }}/{{ item }}-namespace.yml"
+      loop:
+        - knative-eventing
+        - knative-serving
+      when: operator_name == "serverless-operator"
+
+  when:
+    - pip_module_openshift_installed  != "0"

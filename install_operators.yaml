@@ -1,12 +1,8 @@
 ---
-- name: Run ansible playbook
+- name: install operators
   hosts: localhost
   vars:
-    manifests_dir: "$GITHUB_WORKSPACE/manifests"
-    kubeconfig_path: "{{ lookup('env','KUBECONFIG') }}"
-    ansible_python_interpreter: /usr/bin/python3
-  environment:
-    KUBECONFIG: "{{ kubeconfig_path }}"
+    manifests_dir: "/tmp/manifests"
   pre_tasks:
     - name: Create directory for all manifests
       file:
@@ -26,6 +22,5 @@
         - {name: dynatrace-operator, namespace: dynatrace}
         - {name: compliance-operator, namespace: openshift-compliance}
         - {name: serverless-operator, namespace: openshift-serverless}
-        - {name: mtc-operator, namespace: openshift-migration}
       loop_control:
         loop_var: operators_var

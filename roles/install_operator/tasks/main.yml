@@ -1,0 +1,20 @@
+---
+
+- name: include set_facts tasks
+  import_tasks: set_facts.yml
+
+- name: include create_namespaces tasks
+  import_tasks: create_namespaces.yml
+
+- name: include create_operatorgroup tasks
+  import_tasks: create_operatorgroup.yml
+
+- name: include create_subscription tasks
+  import_tasks: create_subscription.yml
+
+# - name: include verification tasks
+#   import_tasks: verification.yml
+
+- name: include config_serverless-operator tasks
+  import_tasks: config_serverless_operator.yml
+  when: operator_name == 'serverless-operator'

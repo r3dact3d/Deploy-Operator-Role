@@ -1,0 +1,124 @@
+---
+- name: create manifest template for {{ operator_name }} subscription
+  template:
+    src: subscription.yml.j2
+    dest: "{{ manifests_dir }}/{{ operator_name }}-subscription.yml"
+    mode: 0644
+    lstrip_blocks: true
+
+- name: create subscriptions with k8s module
+  block:
+    - name: create subscription for {{ operator_name }} with k8s module
+      k8s:
+        state: present
+        wait: true
+        definition: "{{ lookup('file', '{{ manifests_dir }}/{{ operator_name }}-subscription.yml') | from_yaml }}"
+
+    - name: dedd
+      debug:
+        msg: "CSV: {{ operator_csv }}     NS: {{ operator_namespace }}"
+
+    - name: wait for successful operator installation for {{ operator_name }} with k8s module...
+      k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: ClusterServiceVersion
+        name: "{{ operator_csv }}"
+        namespace: "{{ operator_namespace }}"
+      register: clusterserviceversion_install_status
+      until:
+        - clusterserviceversion_install_status | json_query('resources[].status.reason') | unique == ["InstallSucceeded"]
+      retries: 60
+      delay: 10
+
+    - name: wait for successful operator deployment for {{ operator_name }} with k8s module...
+      k8s_info:
+        api_version: v1
+        kind: Deployment
+        name: "{{ 'migration-operator' if (operator_name == 'mtc-operator' ) else 'gitops-operator-controller-manager' if (operator_name == 'openshift-gitops-operator' ) else operator_name }}"
+        namespace: "{{ operator_namespace }}"
+      register: operator_deploy_status
+      until:
+        -  operator_deploy_status | json_query('resources[].status.readyReplicas') | unique | min | int >= 1
+      retries: 60
+      delay: 10
+      when: operator_name != "serverless-operator"
+
+    - name: denbi
+      debug:
+        msg: "{{ operator_deploy_status }}"
+
+    - name: wait for successful operator deployment for serverless-operator with k8s module...
+      k8s_info:
+        api_version: v1
+        kind: Deployment
+        name: "{{ item }}"
+        namespace: "{{ operator_namespace }}"
+      register: operator_deploy_status
+      until:
+        -  operator_deploy_status | json_query('resources[].status.readyReplicas') | unique | min | int >= 1
+      retries: 60
+      delay: 10
+      loop:
+        - knative-openshift
+        - knative-openshift-ingress
+        - knative-operator
+      when: operator_name == "serverless-operator"
+
+  when:
+    - pip_module_openshift_installed  == "0"
+
+- name: create subscriptions with raw commands
+  block:
+    - name: create subscription for {{ operator_name }} with raw commands
+      command: "oc apply -f {{ manifests_dir }}/{{ operator_name }}-subscription.yml"
+
+    # - name: wait until {{ operator_name }} subscription is created...
+    #   command: "oc get subscription {{ operator_name }} -n {{ operator_namespace }} -o jsonpath='{.status.conditions[].status}'"
+    #   register: subscription_created
+    #   until: "'False' in subscription_created.stdout"
+    #   retries: 60
+    #   delay: 10
+
+    - name: wait for successful operator installation for {{ operator_name }} with raw commands...
+      shell: "oc get clusterserviceversion -n {{ operator_namespace }} | grep {{ operator_name }} | awk '{ print $(NF) }'"
+      register: clusterserviceversion_created
+      until: "'Succeeded' in clusterserviceversion_created.stdout"
+      retries: 60
+      delay: 2
+
+    - name: wait for successful operator deployment for {{ operator_name }} with raw commands...
+      command: "oc get deployment {{ 'gitops-operator-controller-manager' if (operator_name == 'openshift-gitops-operator') else 'migration-operator' if (operator_name == 'mtc-operator' ) else operator_name }} -n {{ operator_namespace }} -o jsonpath='{.status.readyReplicas}' "
+      register: deployment_created
+      until:
+        - deployment_created.stdout | int >= 1
+      retries: 60
+      delay: 10
+      when:
+        - operator_name != "serverless-operator"
+
+    - name: wait for successful operator deployment for serverless-operator with raw commands...
+      command: "oc get deployment {{ item }} -n {{ operator_namespace }} -o jsonpath='{.status.readyReplicas}' "
+      register: deployment_created
+      until:
+        - deployment_created.stdout | int >= 1
+      retries: 60
+      delay: 10
+      loop:
+        - knative-openshift
+        - knative-openshift-ingress
+        - knative-operator
+      when: operator_name == "serverless-operator"
+
+    # - name: wait for successful deployment...v2.3
+    #   command: "oc get deployment {{ item }} -n {{ operator_namespace }} -o jsonpath='{.status.readyReplicas}' "
+    #   register: deployment_created
+    #   until:
+    #     - deployment_created.stdout | int >= 1
+    #   retries: 60
+    #   delay: 10
+    #   loop:
+    #     - gitops-operator-controller-manager
+    #   when: operator_name == "openshift-gitops-operator"
+
+  when:
+    - pip_module_openshift_installed  != "0"

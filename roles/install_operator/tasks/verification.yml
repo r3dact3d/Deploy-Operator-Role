@@ -1,0 +1,28 @@
+---
+
+- name: Verify namespace is created
+  command: "oc get namespace {{ operator_namespace }}"
+  changed_when: false
+  register: verify_namespace
+
+- name: Print namespace created output
+  debug:
+    var: verify_namespace.stdout_lines
+
+- name: Verify that {{ operator_name }} OperatorGroup exists in the {{ operator_namespace }}
+  command: "oc get operatorgroups -n {{ operator_namespace }}"
+  changed_when: false
+  register: verify_operatorgroup
+
+- name: Print operatorgroup output
+  debug:
+    var: verify_operatorgroup.stdout_lines
+
+- name: Verify that {{ operator_name }} Subscription exists in the {{ operator_namespace }}
+  command: "oc get subs -n {{ operator_namespace }}"
+  changed_when: false
+  register: verify_subscription
+
+- name: Print subscription output
+  debug:
+    var: verify_subscription.stdout_lines
