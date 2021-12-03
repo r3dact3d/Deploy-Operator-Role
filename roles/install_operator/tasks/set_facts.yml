@@ -18,13 +18,13 @@
     operator_catalogsource: "{{ reg_operator_catalogsource.stdout }}"
 
 - name: Get Operator StartingCSV - {{ operator_name }}
-  command: oc get packagemanifest {{ operator_name }} -n openshift-marketplace -o jsonpath='{.status.channels[].currentCSV}'
+  command: oc get packagemanifest {{ operator_name }} -n openshift-marketplace -o jsonpath='{.status.channels[-1:].currentCSV}'
   changed_when: false
-  register: reg_operator_startingcsv
+  register: reg_operator_csv
 
 - name: Set fact for Operator StartingCSV - {{ operator_name }}
   set_fact:
-    operator_startingcsv: "{{ reg_operator_startingcsv.stdout }}"
+    operator_csv: "{{ reg_operator_csv.stdout }}"
 
 - name: Get Operator version - {{ operator_name }}
   command: oc get packagemanifest {{ operator_name }} -n openshift-marketplace -o jsonpath='{.status.channels[].currentCSVDesc.version}'

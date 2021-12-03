@@ -1,33 +1,25 @@
 ---
-- name: create namespaces v1
+
+- name: create manifest template for {{ operator_namespace }} namespace
+  template:
+    src: namespace.yml.j2
+    dest: "{{ manifests_dir }}/{{ operator_name }}-namespace.yml"
+    mode: 0644
+    lstrip_blocks: true
+
+- name: create namespaces with k8s module
   block:
-    - name: create {{ operator_namespace }} namespace v1
+    - name: create {{ operator_namespace }} namespace with k8s module
       k8s:
         state: present
         wait: true
-        definition:
-          apiVersion: v1
-          kind: Namespace
-          labels:
-            "openshift.io/cluster-monitoring": "true"
-          metadata:
-            annotations:
-              openshift.io/node-selector: ""
-            name: "{{ operator_namespace }}"
+        definition: "{{ lookup('file', '{{ manifests_dir }}/{{ operator_name }}-namespace.yml') | from_yaml }}"
 
     - name: create knative-serving and knative-eventing namespace
       k8s:
         state: present
         wait: true
-        definition:
-          apiVersion: v1
-          kind: Namespace
-          labels:
-            "openshift.io/cluster-monitoring": "true"
-          metadata:
-            annotations:
-              openshift.io/node-selector: ""
-            name: "{{ item }}"
+        definition: "{{ lookup('file', '{{ manifests_dir }}/{{ operator_name }}-namespace.yml') | from_yaml }}"
       loop:
         - knative-eventing
         - knative-serving
@@ -36,16 +28,9 @@
   when:
     - pip_module_openshift_installed  == "0"
 
-- name: create namespaces v2
+- name: create namespaces with raw commands
   block:
-    - name: create manifest template for {{ operator_namespace }} namespace
-      template:
-        src: namespace.yml.j2
-        dest: "{{ manifests_dir }}/{{ operator_name }}-namespace.yml"
-        mode: 0644
-        lstrip_blocks: true
-
-    - name: Apply {{ operator_namespace }} manifest file
+    - name: create {{ operator_namespace }} namespace with raw commands
       command: "oc apply -f {{ manifests_dir }}/{{ operator_name }}-namespace.yml"
 
     - name: Wait until {{ operator_namespace }} namespace is created

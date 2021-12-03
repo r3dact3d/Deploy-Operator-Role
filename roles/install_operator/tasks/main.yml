@@ -12,8 +12,8 @@
 - name: include create_subscription tasks
   import_tasks: create_subscription.yml
 
-- name: include verification tasks
-  import_tasks: verification.yml
+# - name: include verification tasks
+#   import_tasks: verification.yml
 
 - name: include config_serverless-operator tasks
   import_tasks: config_serverless_operator.yml

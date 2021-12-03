@@ -1,47 +1,26 @@
 ---
-- name: create operatorgroups v1
-  block:
-  - name: create {{ operator_name }} operatorgroup v1
-    k8s:
-      state: present
-      wait: true
-      definition:
-        apiVersion: operators.coreos.com/v1
-        kind: OperatorGroup
-        metadata:
-          name: "{{ operator_name }}"
-          namespace: "{{ operator_namespace }}"
-        spec:
-          targetNamespaces:
-            - "{{ operator_namespace }}"
-    when: operator_name != "serverless-operator"
 
-  - name: create {{ operator_name }} operatorgroup v1
+- name: create manifest template for {{ operator_name }} operatorgroup
+  template:
+    src: operatorgroup.yml.j2
+    dest: "{{ manifests_dir }}/{{ operator_name }}-operatorgroup.yml"
+    mode: 0644
+    lstrip_blocks: false
+
+- name: create operatorgroups with k8s module
+  block:
+  - name: create {{ operator_name }} operatorgroup with k8s module
     k8s:
       state: present
       wait: true
-      definition:
-        apiVersion: operators.coreos.com/v1
-        kind: OperatorGroup
-        metadata:
-          name: "{{ operator_name }}"
-          namespace: "{{ operator_namespace }}"
-        spec: {}
-    when: operator_name == "serverless-operator"
+      definition: "{{ lookup('file', '{{ manifests_dir }}/{{ operator_name }}-operatorgroup.yml') | from_yaml }}"
 
   when:
     - pip_module_openshift_installed  == "0"
 
-- name: create operatorgroups v2
+- name: create operatorgroups with raw commands
   block:
-  - name: create manifest template for {{ operator_name }} operatorgroup
-    template:
-      src: operatorgroup.yml.j2
-      dest: "{{ manifests_dir }}/{{ operator_name }}-operatorgroup.yml"
-      mode: 0644
-      lstrip_blocks: false
-
-  - name: Apply {{ operator_name }} manifest file
+  - name: create {{ operator_name }} operatorgroup with raw commands
     command: "oc apply -f {{ manifests_dir }}/{{ operator_name }}-operatorgroup.yml"
 
   when:
