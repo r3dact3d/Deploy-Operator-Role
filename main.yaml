@@ -2,7 +2,7 @@
 - name: Run ansible playbook
   hosts: localhost
   vars:
-    manifests_dir: "$GITHUB_WORKSPACE/manifests"
+    manifests_dir: "{{ lookup('env','GITHUB_WORKSPACE') }}/manifests"
     kubeconfig_path: "{{ lookup('env','KUBECONFIG') }}"
     ansible_python_interpreter: /usr/bin/python3
   environment:
@@ -13,6 +13,16 @@
         path: "{{ manifests_dir }}"
         state: directory
         mode: 0644
+
+    - name: Get output from pip show openshift command
+      command: pip show openshift
+      ignore_errors: true
+      changed_when: false
+      register: reg_pip_module_openshift_installed
+
+    - name: Set fact for openshift module
+      set_fact:
+        pip_module_openshift_installed: "{{ reg_pip_module_openshift_installed.rc }}"
 
   tasks:
     - name: Include install_operators role

@@ -34,13 +34,3 @@
 - name: Set fact for Operator version - {{ operator_name }}
   set_fact:
     operator_version: "{{ reg_operator_version.stdout }}"
-
-- name: Get output from pip show openshift command
-  command: pip show openshift
-  ignore_errors: true
-  changed_when: false
-  register: reg_pip_module_openshift_installed
-
-- name: Set fact for openshift module
-  set_fact:
-    pip_module_openshift_installed: "{{ reg_pip_module_openshift_installed.rc }}"
