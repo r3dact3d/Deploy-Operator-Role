@@ -12,7 +12,7 @@
       file:
         path: "{{ manifests_dir }}"
         state: directory
-        mode: 0644
+        mode: 0777
 
     - name: Get output from pip show openshift command
       command: pip show openshift
