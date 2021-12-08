@@ -1,3 +1,3 @@
+ansible==2.9.17
 openshift
 jmespath
-ansible==2.9.17
