@@ -11,7 +11,7 @@
       file:
         path: "{{ manifests_dir }}"
         state: directory
-        mode: 0775
+        mode: 0777
 
     - name: Get output from pip show openshift command
       command: pip show openshift
@@ -24,21 +24,6 @@
         pip_module_openshift_installed: "{{ reg_pip_module_openshift_installed.rc }}"
 
   tasks:
-    - name: Include install_operators role
-      include_role:
-        name: install_operator
-      vars:
-        operator_name: "{{ operators_var.name }}"
-        operator_namespace: "{{ operators_var.namespace }}"
-      loop:
-        - {name: openshift-gitops-operator, namespace: openshift-operators}
-        - {name: dynatrace-operator, namespace: dynatrace}
-        - {name: compliance-operator, namespace: openshift-compliance}
-        - {name: serverless-operator, namespace: openshift-serverless}
-        - {name: mtc-operator, namespace: openshift-migration}
-      loop_control:
-        loop_var: operators_var
-
     - name: Include day_2_ops role
       include_role:
         name: day_2_ops

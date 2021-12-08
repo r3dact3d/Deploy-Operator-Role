@@ -1,0 +1,75 @@
+---
+
+- name: create manifest template for infra machine config pool
+  template:
+    src: infra-machine-config-pool.yml.j2
+    dest: "{{ manifests_dir }}/infra-machine-config-pool.yml"
+    mode: 0644
+    lstrip_blocks: true
+
+- name: create manifest template for router migration to infra nodes
+  template:
+    src: router-to-infra.yml.j2
+    dest: "{{ manifests_dir }}/router-to-infra.yml"
+    mode: 0644
+    lstrip_blocks: true
+
+- name: create manifest template for registry migration to infra nodes
+  template:
+    src: registry-to-infra.yml.j2
+    dest: "{{ manifests_dir }}/registry-to-infra.yml"
+    mode: 0644
+    lstrip_blocks: true
+
+- name: create manifest template for monitoring migration to infra nodes
+  template:
+    src: monitoring-to-infra.yml.j2
+    dest: "{{ manifests_dir }}/monitoring-to-infra.yml"
+    mode: 0644
+    lstrip_blocks: true
+
+- name: create infra machine config pool with k8s module
+  block:
+    - name: create infra machine config pool with k8s module
+      k8s:
+        state: present
+        wait: true
+        definition: "{{ lookup('file', '{{ manifests_dir }}/infra-machine-config-pool.yml') | from_yaml }}"
+
+    - name: migrate router workloads to infra nodes with k8s module
+      k8s:
+        state: present
+        wait: true
+        definition: "{{ lookup('file', '{{ manifests_dir }}/router-to-infra.yml') | from_yaml }}"
+
+    - name: migrate registry workloads to infra nodes with k8s module
+      k8s:
+        state: present
+        wait: true
+        definition: "{{ lookup('file', '{{ manifests_dir }}/registry-to-infra.yml') | from_yaml }}"
+
+    - name: migrate monitoring workloads to infra nodes with k8s module
+      k8s:
+        state: present
+        wait: true
+        definition: "{{ lookup('file', '{{ manifests_dir }}/monitoring-to-infra.yml') | from_yaml }}"
+
+  when:
+    - pip_module_openshift_installed  == "0"
+
+- name: create infra machine config pool with raw commands
+  block:
+    - name: create infra machine config pool with raw commands
+      command: "oc apply -f {{ manifests_dir }}/infra-machine-config-pool.yml"
+
+    - name: migrate router workloads to infra nodes with raw commands
+      command: "oc apply -f {{ manifests_dir }}/router-to-infra.yml"
+
+    - name: migrate registry workloads to infra nodes with raw commands
+      command: "oc apply -f {{ manifests_dir }}/registry-to-infra.yml"
+
+    - name: migrate monitoring workloads to infra nodes with raw commands
+      command: "oc apply -f {{ manifests_dir }}/monitoring-to-infra.yml"
+
+  when:
+    - pip_module_openshift_installed  != "0"

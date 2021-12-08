@@ -1,0 +1,8 @@
+---
+# tasks file for day_2_ops
+
+- name: include disable_master_scheduling tasks
+  import_tasks: disable_master_scheduling.yml
+
+- name: include infrastructure_nodes tasks
+  import_tasks: infrastructure_nodes.yml
